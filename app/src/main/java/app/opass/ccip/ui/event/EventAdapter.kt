@@ -20,9 +20,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class EventAdapter(private val mContext: Context, private val eventList: List<Event>?) :
+class EventAdapter(
+    private val mContext: Context,
+    eventList: List<Event>?
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     CoroutineScope by CoroutineScope(Dispatchers.Main) {
+
+    private val events = eventList ?: emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
@@ -31,7 +36,7 @@ class EventAdapter(private val mContext: Context, private val eventList: List<Ev
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         val holder = viewHolder as ViewHolder
-        val event: Event = eventList!![position]
+        val event: Event = events[position]
 
         holder.title.text = event.displayName.findBestMatch(mContext)
         viewHolder.logo.load(event.logoUrl)
@@ -54,9 +59,7 @@ class EventAdapter(private val mContext: Context, private val eventList: List<Ev
         }
     }
 
-    override fun getItemCount(): Int {
-        return eventList!!.size
-    }
+    override fun getItemCount(): Int = events.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.event_name)
